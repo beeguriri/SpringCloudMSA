@@ -23,3 +23,56 @@
 - Spring Cloud OpenFeign : 각 서비스간 통신 (API)
 - Spring Cloud Security
 
+## Service Discovery
+- 유레카 서버 등록
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
+```
+```yaml
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+```
+```java
+@SpringBootApplication
+@EnableEurekaServer
+public class DiscoveryServiceApplication{
+    //...
+}
+```
+- 유레카 서비스 등록
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+```
+```yaml
+eureka:
+  client:
+    register-with-eureka: true
+    # 서버로부터 인스턴스들의 정보를 주기적으로 가져오겠다
+    fetch-registry: true 
+    service-url:
+      #유레카 엔드포인트에 마이크로서비스 정보 등록
+      defaultZone: http://127.0.0.1:8761/eureka 
+```
+```java
+@SpringBootApplication
+@EnableEurekaClient
+public class UserServiceApplication {
+    //...
+}
+```
+- 서비스 인스턴스 여러개 띄울 때
+  - 혹시 maven이 설치 되지 않았다면 [다운로드-maven.apache.org](https://maven.apache.org/download.cgi)
+  - `3.8.8` 다운로드 및 압축해제, 환경변수-path 추가
+```
+$ mvn spring-boot:run '-Dspring-boot.run.jvmArguments=-Dserver.port=9002'
+$ mvn spring-boot:run '-Dspring-boot.run.jvmArguments=-Dserver.port=9003'
+```
+![](/images/eureka_test.png)
