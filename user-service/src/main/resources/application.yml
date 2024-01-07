@@ -1,11 +1,14 @@
 server:
   port: 9001
+#  port: 0 # random port 사용
 
 spring:
   application:
     name: user-service #고유 ID
 
 eureka:
+#  instance:
+#    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
   client:
     register-with-eureka: true
     fetch-registry: true # 서버로부터 인스턴스들의 정보를 주기적으로 가져오겠다
