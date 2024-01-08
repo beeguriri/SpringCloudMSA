@@ -30,7 +30,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             //Post-Filter 적용
             //webFlux에서 사용하는 Mono Type
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                log.info("Custom Post-Filter : response id -> {}", response.getStatusCode());
+                log.info("Custom Post-Filter : response code -> {}", response.getStatusCode());
             }));
         };
     }
