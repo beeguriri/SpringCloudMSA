@@ -1,0 +1,29 @@
+package wendy.study.secondservice;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/second-service")
+@Slf4j
+public class SecondServiceController {
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello Second Service!";
+    }
+
+    @GetMapping("/message")
+    public String message(@RequestHeader("second-request") String header) {
+        log.info("header = {}", header);
+        return "Hello Second Service!";
+    }
+
+    @GetMapping("/check")
+    public String check() {
+        return "This is a message from Second Service";
+    }
+}
