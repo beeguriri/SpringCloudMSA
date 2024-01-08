@@ -81,6 +81,7 @@ $ mvn spring-boot:run '-Dspring-boot.run.jvmArguments=-Dserver.port=9003'
 - 단일 진입점을 통해 MicroService에 접근
 - 인증, 권한 부여 단일 작업
 - 속도 제한, 부하 분산
+  - 여러 개의 인스턴스를 띄울 경우 라운드로빈 방식으로 로드발란싱
 - Spring Cloud에서 MSA간 통신
   - RestTemplate : 서버의 주소, 포트 번호로 호출
   - Feign Client : 이름으로만 호출 할 수 있음
@@ -94,13 +95,33 @@ $ mvn spring-boot:run '-Dspring-boot.run.jvmArguments=-Dserver.port=9003'
 spring:
   cloud:
     gateway:
+      #global filter 적용
+      default-filters:
+        - name : GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      #routing 정보
       routes:
         - id: first-service
-          uri: http://localhost:8081
+          uri: lb://MY-FIRST-SERVICE
           predicates:
             - Path=/first-service/**
+          filters:
+            # custom filter 각각 적용
+            - CustomFilter
         - id: second-service
-          uri: http://localhost:8082
+          uri: lb://MY-SECOND-SERVICE
           predicates:
             - Path=/second-service/**
+          filters:
+            # custom filter 각각 적용
+            # OrderedGatewayFilter를 구현하여 filter 순서 지정 가능
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Apply Custom Logging Filter!
+                preLogger: true
+                postLogger: true
 ```
