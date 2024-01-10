@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import wendy.study.userservice.dto.UserDto;
 import wendy.study.userservice.entity.UserEntity;
 import wendy.study.userservice.repository.UserRepository;
+import wendy.study.userservice.vo.ResponseOrder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -44,8 +47,13 @@ public class UserServiceImpl implements UserService{
         if(findUser == null)
             throw new UsernameNotFoundException("사용자가 없습니다.");
 
-        return new ModelMapper().map(findUser, UserDto.class);
+        UserDto userDto = new ModelMapper().map(findUser, UserDto.class);
 
+        //TODO: 주문부분 구현
+        List<ResponseOrder> orders = new ArrayList<>();
+        userDto.setOrders(orders);
+
+        return userDto;
     }
 
 

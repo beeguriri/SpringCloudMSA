@@ -1,8 +1,10 @@
 package wendy.study.userservice.dto;
 
 import lombok.Data;
+import wendy.study.userservice.vo.ResponseOrder;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserDto {
@@ -12,4 +14,6 @@ public class UserDto {
     private String userId;
     private Date createdAt;
     private String encryptedPwd;
+
+    private List<ResponseOrder> orders;
 }
