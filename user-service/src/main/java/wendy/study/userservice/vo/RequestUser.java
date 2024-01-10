@@ -16,7 +16,6 @@ public class RequestUser {
 
     @NotNull(message = "이름은 필수값 입니다.")
     @Size(min = 2, message = "이름은 2글자 이상 입력 되어야 합니다.")
-    @Email
     private String name;
 
     @NotNull(message = "비밀번호는 필수값 입니다.")
