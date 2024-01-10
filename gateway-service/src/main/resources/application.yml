@@ -36,6 +36,10 @@ spring:
                 baseMessage: Apply Custom Logging Filter!
                 preLogger: true
                 postLogger: true
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
 
 eureka:
   client:
