@@ -3,6 +3,7 @@ package wendy.study.userservice.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import wendy.study.userservice.dto.UserDto;
@@ -29,4 +30,23 @@ public class UserServiceImpl implements UserService{
         userEntity.setEncryptedPwd(encoder.encode(userDto.getPassword()));
         userRepository.save(userEntity);
     }
+
+    @Override
+    public Iterable<UserEntity> getUserByAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public UserDto getUserByUserId(String userId) {
+
+        UserEntity findUser = userRepository.findByUserId(userId);
+
+        if(findUser == null)
+            throw new UsernameNotFoundException("사용자가 없습니다.");
+
+        return new ModelMapper().map(findUser, UserDto.class);
+
+    }
+
+
 }
