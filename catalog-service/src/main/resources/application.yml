@@ -15,6 +15,8 @@ spring:
       ddl-auto: create-drop
     show-sql: true
     generate-ddl: true
+    # 하이버네이트 초기화 이후 작동할 수 있도록 설정
+    defer-datasource-initialization: true
   h2:
     console:
       enabled: true
@@ -30,9 +32,3 @@ eureka:
     fetch-registry: true # 서버로부터 인스턴스들의 정보를 주기적으로 가져오겠다
     service-url: #서버의 위치 지정
       defaultZone: http://127.0.0.1:8761/eureka #유레카 엔드포인트에 마이크로서비스 정보 등록
-
-# welcome message 작성
-# Environment 객체 이용해서 사용
-# 또는 @Value 어노테이션 이용해서 사용
-greeting:
-  message: Welcome to the Simple E-Commerce.
