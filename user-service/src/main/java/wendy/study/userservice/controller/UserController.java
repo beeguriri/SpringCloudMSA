@@ -12,16 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import wendy.study.userservice.dto.UserDto;
 import wendy.study.userservice.entity.UserEntity;
 import wendy.study.userservice.service.UserService;
-import wendy.study.userservice.vo.Greeting;
-import wendy.study.userservice.vo.RequestUser;
-import wendy.study.userservice.vo.ResponseUser;
+import wendy.study.userservice.vo.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user-service")
+//@RequestMapping("/user-service") //gateway에서 pathRewrite 정의함
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
@@ -83,5 +81,4 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
-
 }
