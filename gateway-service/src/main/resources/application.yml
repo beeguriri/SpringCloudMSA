@@ -36,10 +36,38 @@ spring:
                 baseMessage: Apply Custom Logging Filter!
                 preLogger: true
                 postLogger: true
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
+        #로그인
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie #post 전달되는 데이터는 매번 새로운걸로 인식하게 하기 위하여
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment} #앞쪽의 패턴으로 들어오면 뒤쪽의 패턴으로 바꾸겠다.
+        #회원가입
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        #그외 서비스
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
