@@ -40,7 +40,7 @@ spring:
 #          uri: lb://USER-SERVICE
 #          predicates:
 #            - Path=/user-service/**
-        #로그인
+        #로그인 - 권한없이 접근
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -49,7 +49,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie #post 전달되는 데이터는 매번 새로운걸로 인식하게 하기 위하여
             - RewritePath=/user-service/(?<segment>.*), /$\{segment} #앞쪽의 패턴으로 들어오면 뒤쪽의 패턴으로 바꾸겠다.
-        #회원가입
+        #회원가입 - 권한없이 접근
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -58,7 +58,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        #그외 서비스
+        #그외 서비스 - 권한 필요
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -67,6 +67,7 @@ spring:
           filters:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderFilter
 
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
@@ -83,3 +84,7 @@ eureka:
     fetch-registry: true
     service-url: #서버의 위치 지정
       defaultZone: http://127.0.0.1:8761/eureka #유레카 엔드포인트에 마이크로서비스 정보 등록
+
+# 토큰 키 지정
+token:
+  secret: user_token
