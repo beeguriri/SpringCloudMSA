@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService{
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        userEntity.setEncryptedPwd(encoder.encode(userDto.getPassword()));
+        userEntity.setEncryptedPassword(encoder.encode(userDto.getPassword()));
         userRepository.save(userEntity);
     }
 
@@ -68,10 +68,23 @@ public class UserServiceImpl implements UserService{
             throw new UsernameNotFoundException(username);
 
         return new User(
-                userEntity.getEmail(), userEntity.getEncryptedPwd(),
+                userEntity.getEmail(), userEntity.getEncryptedPassword(),
                 //enabled, accountNonExpired, credentialsNonExpired, accontNonLocked
                 true, true, true, true,
                 new ArrayList<>()
         );
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email) {
+
+        UserEntity findUser = userRepository.findByEmail(email);
+
+        if(findUser == null)
+            throw new UsernameNotFoundException("사용자가 없습니다.");
+
+        //mapper를 strict로 설정해주지 않았기 때문에
+        //UserDto에 password, Encrypted_password 모두 Encrypted_password로 들어감
+        return new ModelMapper().map(findUser, UserDto.class);
     }
 }

@@ -13,7 +13,7 @@ public class UserDto {
     private String password;
     private String userId;
     private Date createdAt;
-    private String encryptedPwd;
+    private String encryptedPassword;
 
     private List<ResponseOrder> orders;
 }

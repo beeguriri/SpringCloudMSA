@@ -1,7 +1,6 @@
 package wendy.study.userservice.entity;
 
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
@@ -21,5 +20,5 @@ public class UserEntity {
     @Column(nullable = false, unique = true)
     private String userId;
     @Column(nullable = false, unique = true)
-    private String encryptedPwd;
+    private String encryptedPassword;
 }

@@ -3,6 +3,7 @@ package wendy.study.userservice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +21,7 @@ public class SecurityConfig {
     private final UserService userService;
     private final ObjectPostProcessor<Object> objectPostProcessor;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Environment env;
 
     //권한 작업
     @Bean
@@ -36,7 +38,8 @@ public class SecurityConfig {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception{
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(env, userService);
         AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
         authenticationFilter.setAuthenticationManager(authenticationManager(builder));
         return authenticationFilter;
