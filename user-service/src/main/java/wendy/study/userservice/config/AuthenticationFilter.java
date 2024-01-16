@@ -1,6 +1,8 @@
 package wendy.study.userservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -58,6 +61,18 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         String email = ((User)authResult.getPrincipal()).getUsername();
         UserDto userDto = userService.getUserByEmail(email);
+
+        //Email로 userDto 가져온 후 token 생성
+        String token = Jwts.builder()
+                .setSubject(userDto.getUserId())
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expriration_time"))))
+                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
+                .compact();
+
+        //header에 심어서 반환
+        log.info("token = {}", token);
+        response.addHeader("token", token);
+        response.addHeader("userId", userDto.getUserId());
 
     }
 }

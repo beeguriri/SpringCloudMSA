@@ -34,3 +34,8 @@ eureka:
 # 또는 @Value 어노테이션 이용해서 사용
 greeting:
   message: Welcome to the Simple E-Commerce.
+
+# 토큰 유효기간, 키 지정
+token:
+  expriration_time: 86400000 #유효기간 1일 (ms)
+  secret: user_token
