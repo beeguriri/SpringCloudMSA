@@ -1,6 +1,13 @@
 # ✨ SpringCloud로 개발하는 MSA
 - 관련 강의 : [Spring Cloud로 개발하는 마이크로서비스 애플리케이션(MSA)](https://inf.run/GHeRm)
 
+## ⭐ 목차
+- [⭐ 개발 환경](#-개발-환경)
+- [⭐ MicroService Architechture](#-microservice-architechture)
+- [⭐ Service Discovery](#-service-discovery)
+- [⭐ API GateWay](#-api-gateway)
+- [⭐ Spring Security & JWT with Spring Cloud](#-spring-security--jwt-with-spring-cloud)
+
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
 - SpringCloud version `2021.0.9 aka jubilee`
@@ -125,3 +132,52 @@ spring:
                 preLogger: true
                 postLogger: true
 ```
+## ⭐ Spring Security & JWT with Spring Cloud
+### ✨ 인증(Authentication)
+- 사용자가 ID, Password 입력하면
+  - `AuthenticationFilter`의 `attemptAuthentication(...)`에서 `UsernamePasswordAuthenticationToken` 객체를 `AuthenticationManager`에 반환
+  - `UserDetailsService`를 구현한 `UserServiceImpl`의 `loadUserByUsername(..)`에서 `User`객체 반환
+- 정상적으로 로그인이 되면
+  -  `AuthenticationFilter`의 `successfulAuthentication(...)`에서 token 생성 후 
+  - response header에 token 추가 후 반환
+- Token은 JWT 라이브러리 이용하여 생성
+  - ```java
+    return Jwts.builder()
+            .setSubject(userDto.getUserId())
+            .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expriration_time"))))
+            .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
+            .compact();
+    ``` 
+  - [jwt.io](jwt.io) 에서 생성 된 토큰 복호화 test
+  - ![](/images/jwt_io.png)
+- (참고) JWT 사용하는 이유?
+  - 세션/쿠키로 인증 할 경우 모바일 등 이기종간의 공유가 안됨
+  - 클라이언트는 서비스를 요청할 때 Token을 함께 보내게 됨 => stateless
+  - Token에 사용자 인증에 필요한 정보가 들어있기 때문에 별도의 인증 저장소 필요 없음
+  - 서버는 사용자에 대한 세션을 유지할 필요가 없어 서버의 자원을 절감할 수 있음
+### ✨ 인가(Authorization)
+- gateway에서 라우팅 할때 필터를 통해 인가 처리함
+  - 인증이 필요없는 회원가입, 로그인 외에는 서비스 요청 시 토큰을 함께 전달
+  - 필터에서 토큰 복호화하여 확인 후 요청 서비스로 라우팅
+  - ```yaml
+    - id: user-service
+      uri: lb://USER-SERVICE
+      predicates:
+        - Path=/user-service/**
+        - Method=GET
+      filters:
+        - AuthorizationHeaderFilter
+     ```
+  - ```java
+      return Jwts.parser().setSigningKey(env.getProperty("token.secret"))
+                    .parseClaimsJws(token).getBody()
+                    .getSubject(); 
+    ``` 
+  - ![](/images/token_request.png)
+- (참고) jwt parsing 시에 `java.lang.NoClassDefFoundError: javax/xml/bind/DatatypeConverter` 발생하면 dependency 추가
+  - ```xml
+    <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+    </dependency>
+    ```
