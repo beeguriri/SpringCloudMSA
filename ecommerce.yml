@@ -1,7 +1,0 @@
-# 토큰 유효기간, 키 지정
-token:
-  expriration_time: 86400000 #유효기간 1일 (ms)
-  secret: user_token
-
-gateway:
-  ip: 127.0.0.1
