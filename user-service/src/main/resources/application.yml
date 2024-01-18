@@ -19,6 +19,13 @@ spring:
       settings:
         web-allow-others: true
       path: /h2-console # http://localhost:9001/h2-console/ 로 접속
+  # config 정보 입력
+  cloud:
+    config:
+      name: ecommerce
+  config:
+    import: optional:configserver:http://127.0.0.1:8888
+
 
 eureka:
 #  instance:
@@ -36,6 +43,6 @@ greeting:
   message: Welcome to the Simple E-Commerce.
 
 # 토큰 유효기간, 키 지정
-token:
-  expriration_time: 86400000 #유효기간 1일 (ms)
-  secret: user_token
+#token:
+#  expriration_time: 86400000 #유효기간 1일 (ms)
+#  secret: user_token
