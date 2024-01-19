@@ -62,6 +62,15 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        #액츄에이터 - 권한 필요 없이 실행 해보기
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET, POST
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+              - RemoveRequestHeader=Cookie
         #그외 서비스 - 권한 필요
         - id: user-service
           uri: lb://USER-SERVICE
@@ -72,15 +81,7 @@ spring:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
             - AuthorizationHeaderFilter
-        #그외 서비스 - 권한 필요
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/actuator/**
-            - Method=GET,POST
-          filters:
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - RemoveRequestHeader=Cookie
+
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
