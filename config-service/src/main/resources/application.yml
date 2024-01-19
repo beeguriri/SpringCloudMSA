@@ -9,4 +9,5 @@ spring:
     config:
       server:
         git:
-          uri: file://d:/Coding Practice/SpringCloudMSA
+#          uri: file://d:/Coding Practice/SpringCloudMSA
+          uri: https://github.com/beeguriri/SpringCloudMSA
