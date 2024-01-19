@@ -4,7 +4,11 @@ server:
 spring:
   application:
     name: gateway-service #고유 ID
+  config:
+    import: optional:configserver:http://127.0.0.1:8888
   cloud:
+    config:
+      name: ecommerce
     gateway:
       #global filter 적용
       default-filters:
@@ -68,7 +72,15 @@ spring:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
             - AuthorizationHeaderFilter
-
+        #그외 서비스 - 권한 필요
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
@@ -86,5 +98,12 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka #유레카 엔드포인트에 마이크로서비스 정보 등록
 
 # 토큰 키 지정
-token:
-  secret: user_token
+#token:
+#  secret: user_token
+
+#actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
