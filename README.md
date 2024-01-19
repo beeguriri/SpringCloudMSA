@@ -7,6 +7,7 @@
 - [⭐ Service Discovery](#-service-discovery)
 - [⭐ API GateWay](#-api-gateway)
 - [⭐ Spring Security & JWT with Spring Cloud](#-spring-security--jwt-with-spring-cloud)
+- [⭐ Spring Cloud Config Server](#-spring-cloud-config-server)
 
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
@@ -181,3 +182,55 @@ spring:
         <artifactId>jaxb-runtime</artifactId>
     </dependency>
     ```
+
+## ⭐ Spring Cloud Config Server
+- 각 서비스를 다시 빌드하지 않고 바로 적용하기 위해
+- 구성에 필요한 설정 정보를 외부시스템에서 관리
+### ✨ config-service
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+</dependency>
+```
+```yaml
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/beeguriri/SpringCloudMSA
+```
+```java
+@SpringBootApplication
+@EnableConfigServer
+public class ConfigServiceApplication {
+  ...
+}
+```
+### ✨ 각 service
+```xml
+<!-- cloud config 사용을 위한 dependency 추가 -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+</dependency>
+<!-- actuator 사용을 위한 dependency 추가 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+```yaml
+  # config 정보 입력
+spring:
+  cloud:
+    config:
+      name: ecommerce
+  config:
+    import: optional:configserver:http://127.0.0.1:8888
+```
