@@ -8,6 +8,7 @@
 - [⭐ API GateWay](#-api-gateway)
 - [⭐ Spring Security & JWT with Spring Cloud](#-spring-security--jwt-with-spring-cloud)
 - [⭐ Spring Cloud Config Server](#-spring-cloud-config-server)
+- [⭐ Spring Cloud Bus](#-spring-cloud-bus)
 
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
@@ -234,3 +235,49 @@ spring:
   config:
     import: optional:configserver:http://127.0.0.1:8888
 ```
+
+## ⭐ Spring Cloud Bus
+- 분산 시스템의 노드를 경량 메시지 브로커와 연결
+- 상태 및 구성에 대한 변경 사항을 연결 된 노드에 전달 (broadcast)
+### ✨ AMQP
+- 메시지 브로커
+- 초당 20+ 메시지를 컨슈머에게 전달
+- `메시지 전달 보장`, 시스템 간 메시지 전달
+- 브로커, 컨슈머 중심
+- [Erlang 설치](https://www.erlang.org/downloads) `26.2.1`, 환경변수 추가
+- [RabbitMq 설치](https://rabbitmq.com/install-windows.html) `3.12.12`, 환경변수 추가
+- management plugin 설치
+```shell
+$ rabbitmq-server -detached
+$ rabbitmq-plugins enable rabbitmq_management
+
+# 실행 안 될 경우
+$ rabbitmq-service.bat remove
+$ rabbitmq-service.bat install
+$ rabbitmq-server -detached
+$ rabbitmq-plugins enable rabbitmq_management
+```
+- http://localhost:15672/ 접속
+  - id : guest / pw: guest
+- dependency 추가 및 yml 파일 설정
+```xml
+<!-- rabbitmq 사용을 위한 dependency 추가 -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+</dependency>
+```
+```yaml
+spring:
+  #rabbitmq 설정
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+```
+### ✨ Kafka
+- `초당 100k+ 이상`의 이벤트 처리
+- pub/sub, topic에 메시지 전달
+- ack를 기다리지 않고 전달 가능
+- 프로듀서 중심
