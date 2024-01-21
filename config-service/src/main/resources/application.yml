@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: config-service
+  #rabbitmq 설정
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
 
   cloud:
     config:
@@ -11,3 +17,10 @@ spring:
         git:
 #          uri: file://d:/Coding Practice/SpringCloudMSA
           uri: https://github.com/beeguriri/SpringCloudMSA
+
+# actuator endpoint 추가
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh
