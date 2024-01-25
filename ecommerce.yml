@@ -1,7 +1,7 @@
 # 토큰 유효기간, 키 지정
 token:
   expriration_time: 86400000 #유효기간 1일 (ms)
-  secret: my_token_change
+  secret: my_token_change222
 
 gateway:
   ip: 127.0.0.1
