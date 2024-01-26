@@ -244,6 +244,14 @@ spring:
 - 초당 20+ 메시지를 컨슈머에게 전달
 - `메시지 전달 보장`, 시스템 간 메시지 전달
 - 브로커, 컨슈머 중심
+
+### ✨ Kafka
+- `초당 100k+ 이상`의 이벤트 처리
+- pub/sub, topic에 메시지 전달
+- ack를 기다리지 않고 전달 가능
+- 프로듀서 중심
+
+### ✨ AMQP 적용하기
 - [Erlang 설치](https://www.erlang.org/downloads) `26.2.1`, 환경변수 추가
 - [RabbitMq 설치](https://rabbitmq.com/install-windows.html) `3.12.12`, 환경변수 추가
 - management plugin 설치
@@ -257,7 +265,7 @@ $ rabbitmq-service.bat install
 $ rabbitmq-server -detached
 $ rabbitmq-plugins enable rabbitmq_management
 ```
-- http://localhost:15672/ 접속
+- http://localhost:15672/ 접속 되는지 확인
   - id : guest / pw: guest
 - dependency 추가 및 yml 파일 설정
 ```xml
@@ -276,8 +284,42 @@ spring:
     username: guest
     password: guest
 ```
-### ✨ Kafka
-- `초당 100k+ 이상`의 이벤트 처리
-- pub/sub, topic에 메시지 전달
-- ack를 기다리지 않고 전달 가능
-- 프로듀서 중심
+### ✨ config 파일 실행 테스트
+- rabbitmq server 실행
+- config-service 실행
+- discovery-service 실행
+- gateway-service 실행
+- user-service 실행
+- POST http://localhost:8000/user-service/actuator/busrefresh 로 서비스 재기동 및 config 변경 정보 반영 되는 것 확인
+
+### ✨ (참고) busrefresh api 관련 에러 해결
+- 서비스들이 재기동 되지만 config 내용 변경이 반영되지 않을 경우
+- 별도의 bootstrap.yml 파일 작성, 
+- application.yml에서 bootstrap 파일 불러오기
+```yaml
+# config-service의 application.yml
+spring:
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # http://127.0.0.1:8888/user-service/native 등으로 경로 반영 잘 됐는 지 확인
+          # 실제 경로는 "file:/C:/Users/pooh1/Documents/native-file-repo/ecommerce.yml"
+          search-locations: file:///${user.home}\Documents\native-file-repo
+
+# gateway-service/user-service bootstrap.yml
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: ecommerce # config-service에서 참조하는 위치에 있는 yml 파일의 이름 작성
+
+# gateway-service/user-service application.yml
+spring:
+  config:
+    import:
+      - classpath:/bootstrap.yml
+```
+
