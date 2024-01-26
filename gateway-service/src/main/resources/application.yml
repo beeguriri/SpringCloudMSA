@@ -10,10 +10,11 @@ spring:
     port: 5672
     username: guest
     password: guest
-  config:
-    import: optional:configserver:http://127.0.0.1:8888
+#  config:
+#    import: optional:configserver:http://127.0.0.1:8888
   cloud:
     config:
+      uri: http://127.0.0.1:8888
       name: ecommerce
     gateway:
       #global filter 적용

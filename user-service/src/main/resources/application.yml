@@ -28,9 +28,10 @@ spring:
   # config 정보 입력
   cloud:
     config:
+      uri: http://127.0.0.1:8888
       name: ecommerce
-  config:
-    import: optional:configserver:http://127.0.0.1:8888
+#  config:
+#    import: optional:configserver:http://127.0.0.1:8888
 
 eureka:
 #  instance:

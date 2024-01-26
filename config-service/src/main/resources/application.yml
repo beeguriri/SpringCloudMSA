@@ -10,13 +10,17 @@ spring:
     port: 5672
     username: guest
     password: guest
-
+  profiles:
+    active: native
   cloud:
     config:
       server:
         git:
 #          uri: file://d:/Coding Practice/SpringCloudMSA
           uri: https://github.com/beeguriri/SpringCloudMSA
+        native:
+          # http://127.0.0.1:8888/user-service/native 등으로 경로 반영 잘 됐는 지 확인
+          search-locations: file:///${user.home}\Documents\native-file-repo
 
 # actuator endpoint 추가
 management:
