@@ -26,10 +26,13 @@ spring:
         web-allow-others: true
       path: /h2-console # http://localhost:9001/h2-console/ 로 접속
   # config 정보 입력
-  cloud:
-    config:
-      uri: http://127.0.0.1:8888
-      name: ecommerce
+  config:
+    import:
+      - classpath:/bootstrap.yml
+#  cloud:
+#    config:
+#      uri: http://127.0.0.1:8888
+#      name: ecommerce
 #  config:
 #    import: optional:configserver:http://127.0.0.1:8888
 
