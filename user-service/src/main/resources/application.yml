@@ -12,9 +12,9 @@ spring:
     username: guest
     password: guest
   # db 사용 설정
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    username: sa
   #jpa 설정 <- h2 버전 안바꿔도 자동 db 생성함
   jpa:
     hibernate:
