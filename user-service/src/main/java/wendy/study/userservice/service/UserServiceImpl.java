@@ -3,16 +3,11 @@ package wendy.study.userservice.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import wendy.study.userservice.dto.UserDto;
 import wendy.study.userservice.entity.UserEntity;
 import wendy.study.userservice.repository.UserRepository;
@@ -28,8 +23,9 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    private final Environment env;
-    private final RestTemplate restTemplate;
+//    private final Environment env;
+//    private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
 
     @Override
     public void createUser(UserDto userDto) {
@@ -60,13 +56,17 @@ public class UserServiceImpl implements UserService{
 
         //1. RestTemplate를 사용하여 Order-service 호출
 //        String orderUrl = "http://127.0.0.1:8000/order-service/%s/orders";
-        String orderUrl = String.format(env.getProperty("order-service.url"), userId);
+//        String orderUrl = String.format(env.getProperty("order-service.url"), userId);
+//
+//        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(
+//                orderUrl, HttpMethod.GET, null,
+//                new ParameterizedTypeReference<>() {}
+//        );
+//        List<ResponseOrder> orderList = orderListResponse.getBody();
 
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(
-                orderUrl, HttpMethod.GET, null,
-                new ParameterizedTypeReference<>() {}
-        );
-        List<ResponseOrder> orderList = orderListResponse.getBody();
+        //2. Openfeign사용하여 order service 호출
+        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+
         userDto.setOrders(orderList);
 
         return userDto;
