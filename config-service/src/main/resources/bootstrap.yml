@@ -1,2 +1,6 @@
 encrypt:
-  key: hello1234spring
+#  key: hello1234spring
+  key-store:
+    location: file:///${user.home}\Documents\keystore\apiEncryptionKey.jks
+    password: test1234
+    alias: apiEncryptionKey

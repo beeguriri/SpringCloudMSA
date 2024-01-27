@@ -53,6 +53,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         //token 복호화 하면 payload의 "subject"에 id return 되어옴
         String subject = null;
         try {
+            log.info("token secret : {}", env.getProperty("token.secret"));
             subject = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
                     .parseClaimsJws(token).getBody()
                     .getSubject();
