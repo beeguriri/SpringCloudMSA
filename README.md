@@ -16,6 +16,7 @@
 - SpringCloud version `2021.0.9 aka jubilee`
 - Java version `17`
 - Type : Maven Project
+- 해당 project test를 하고자 할 경우 "C://Documents(내문서)"에 "etc폴더 내 2개의 폴더 옮겨 놓기"
 
 ## ⭐ MicroService Architechture
 ![](/images/msa_architecture.png)
@@ -326,7 +327,6 @@ spring:
 
 ## ⭐ Config 정보의 암호화 처리
 ### ✨ 대칭키를 이용한 암호화
-- JDK 11버전 이상 사용 권장
 - bootstrap.yml 에 encrypt key값 작성 하여 적용
 - POST 127.0.0.1:8888/encrypt, decrypt 에서 test
   ![](/images/encrypt.png)
@@ -353,5 +353,26 @@ spring:
   ```
   ![](/images/encrypt_db_source.png)
 ### ✨ 비대칭키를 이용한 암호화
-- bb
-
+- JDK 11버전 이상 사용 권장
+- RSA 알고리즘 사용
+  ```shell
+  # private key 생성
+  $ keytool -genkeypair -alias apiEncryptionKey -keyalg RSA 
+    -dname "CN=wendy, OU=API Development, O=https://github.com/beeguriri, L=Seoul, C=KR" 
+    -keypass "test1234" -keystore apiEncryptionKey.jks
+  
+  Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 90 days
+  for: CN=wendy, OU=API Development, O=https://github.com/beeguriri, L=Seoul, C=KR
+  ```
+  ![](/images/gen_private_key.png)
+  ```shell
+  # 인증서 생성
+  $ keytool -export -alias apiEncryptionKey -keystore apiEncryptionKey.jks -rfc -file trustServer.cer
+  
+  # public key 생성
+  $ keytool -import -alias trustServer -file trustServer.cer -keystore publicKey.jks
+  ```
+  ![](/images/noncymetrickey.png)
+- 키 적용 확인
+  ![](/images/rsa_encrypt.png)
+  ![](/images/rsa_decrypt.png)

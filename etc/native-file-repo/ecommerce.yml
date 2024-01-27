@@ -1,0 +1,8 @@
+# application에서 공통으로 사용되는 부분은 별도 분리
+# 토큰 유효기간, 키 지정
+# token:
+#   expriration_time: 86400000 #유효기간 1일 (ms)
+#   secret: '{cipher}AQCA93U1102KiLASSlgL0tyUfOXnO6z6bIIl0arjJUuxpmutLjGngOX+PaqF9GztRP1BQ7TCD+mW6gEaax2LSUUS1SEQ7UdfO6HiuhpFqUezfxEfJF0x1E4rgGJHQgoqEV7yyhvb2GlQmxfkM2B+hszfu+WIYSb7n7zp2jV7SkqbKkynz3hnmkmDE1Uikz1D9j0RI2MIlDlUBwrmbSwgnG6uB6X714Wlel2D+KlsGZItOVSkaDx/l3N+QsTveFyt/Lc6T6MC6cAM81rdYA2LVENGI2mErkeV2T5VnKShMmkFAysLdC8bgQ2J7LbUc/n2Lpax+rP73dQnVvTHHjZT/Qf0IdW7lJXI3UgfIU4za02DYH65mMOt5dJyekZHJNL6+6gi59ZQ2FBfylOYNR/yRjox'
+
+# gateway:
+#   ip: 127.0.0.1
