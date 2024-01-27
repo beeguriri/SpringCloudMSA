@@ -9,6 +9,7 @@
 - [⭐ Spring Security & JWT with Spring Cloud](#-spring-security--jwt-with-spring-cloud)
 - [⭐ Spring Cloud Config Server](#-spring-cloud-config-server)
 - [⭐ Spring Cloud Bus](#-spring-cloud-bus)
+- [⭐ Config 정보의 암호화 처리](#-config-정보의-암호화-처리)
 
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
@@ -322,4 +323,35 @@ spring:
     import:
       - classpath:/bootstrap.yml
 ```
+
+## ⭐ Config 정보의 암호화 처리
+### ✨ 대칭키를 이용한 암호화
+- JDK 11버전 이상 사용 권장
+- bootstrap.yml 에 encrypt key값 작성 하여 적용
+- POST 127.0.0.1:8888/encrypt, decrypt 에서 test
+  ![](/images/encrypt.png)
+  ![](/images/decrypt.png)
+- db의 접속정보를 별도(외부)의 config파일에 작성 및 암호화 후 test
+  ```yaml
+  # config-service bootstrap.yml에 encrypt key 작성
+  encrypt:
+    key: hello1234spring
+  
+  # user-service에서 외부에서 불러올 config 파일 설정
+  spring:
+    cloud:
+      config:
+        uri: http://127.0.0.1:8888
+        name: user-service
+        
+  # 외부의 user-service.yml 파일에 database 접속정보 설정
+  spring:
+    datasource:
+      url: jdbc:h2:mem:testdb
+      username: sa
+      password: '{cipher}ce8f7745d1387a521c0044fae541ceb35d507bc7797095e24fbbed2224cf50c1'
+  ```
+  ![](/images/encrypt_db_source.png)
+### ✨ 비대칭키를 이용한 암호화
+- bb
 
