@@ -1,6 +1,8 @@
 package wendy.study.userservice.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.User;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import wendy.study.userservice.client.OrderServiceClient;
 import wendy.study.userservice.dto.UserDto;
 import wendy.study.userservice.entity.UserEntity;
 import wendy.study.userservice.repository.UserRepository;
@@ -19,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
@@ -65,7 +69,13 @@ public class UserServiceImpl implements UserService{
 //        List<ResponseOrder> orderList = orderListResponse.getBody();
 
         //2. Openfeign사용하여 order service 호출
-        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        //예외처리 추가
+        List<ResponseOrder> orderList = null;
+        try{
+            orderList = orderServiceClient.getOrders(userId);
+        } catch (FeignException ex) {
+            log.error(ex.getMessage());
+        }
 
         userDto.setOrders(orderList);
 

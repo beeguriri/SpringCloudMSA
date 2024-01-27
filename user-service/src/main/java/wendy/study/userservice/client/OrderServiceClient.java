@@ -1,4 +1,4 @@
-package wendy.study.userservice.service;
+package wendy.study.userservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +10,6 @@ import java.util.List;
 @FeignClient(name = "order-service")
 public interface OrderServiceClient {
 
-    @GetMapping("/order-service/{userId}/orders")
+    @GetMapping("/order-service/{userId}/orders_ng")
     List<ResponseOrder> getOrders(@PathVariable("userId") String userId);
 }

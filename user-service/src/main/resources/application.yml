@@ -60,3 +60,8 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
+
+#로깅레벨 추가
+logging:
+  level:
+    wendy.study.userservice.client: DEBUG
