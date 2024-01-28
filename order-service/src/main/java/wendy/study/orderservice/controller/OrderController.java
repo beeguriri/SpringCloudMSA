@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wendy.study.orderservice.dto.OrderDto;
 import wendy.study.orderservice.entity.OrderEntity;
+import wendy.study.orderservice.message.KafkaProducer;
 import wendy.study.orderservice.service.OrderService;
 import wendy.study.orderservice.vo.RequestOrder;
 import wendy.study.orderservice.vo.ResponseOrder;
@@ -25,6 +26,7 @@ public class OrderController {
 
     private final Environment env;
     private final OrderService orderService;
+    private final KafkaProducer kafkaProducer;
 
     @GetMapping("/health_check")
     public String status() {
@@ -70,6 +72,9 @@ public class OrderController {
 
         OrderDto savedOrder = orderService.createOrder(orderDto);
         ResponseOrder responseOrder = mapper.map(savedOrder, ResponseOrder.class);
+
+        /* kafka에 메시지 전달 */
+        kafkaProducer.send("example-catalog-topic", orderDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }
