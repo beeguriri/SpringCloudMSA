@@ -3,6 +3,7 @@
 
 ## ⭐ 목차
 - [⭐ 개발 환경](#-개발-환경)
+- [⭐ 실행 순서](#-실행-순서)
 - [⭐ MicroService Architechture](#-microservice-architechture)
 - [⭐ Service Discovery](#-service-discovery)
 - [⭐ API GateWay](#-api-gateway)
@@ -23,6 +24,67 @@
 - Maria DB `2.7.11` 
 - 해당 project test를 하고자 할 경우 "C://Documents(내문서)"에 "etc폴더 내 2개의 폴더 옮겨 놓기"
 
+## ⭐ 실행 순서
+```shell
+# zookeeper-server 기동
+kafka_2.13-3.6.1$ .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+# kafka server 기동
+kafka_2.13-3.6.1$ .\bin\windows\kafka-server-start.bat .\config\server.properties
+
+# eureka server 기동
+SpringCloudMSA\discovery-service$ mvn spring-boot:run
+
+# config service 실행
+SpringCloudMSA\config-service$ mvn spring-boot:run
+
+# api gateway service 실행
+SpringCloudMSA\gateway-service$ mvn spring-boot:run
+
+# kafka connector 실행
+confluent-7.5.3$ .\bin\windows\connect-distributed.bat .\etc\kafka\connect-distributed.properties
+
+# kafka-console-consumer로 확인
+kafka_2.13-3.6.1$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic orders --from-beginning
+```
+- 필요 시 db의 table 만들기 (Maria DB CMD)
+```shell
+# mariadb 실행 
+$ mysql -uroot -p
+# password 입력
+
+> show databases;
+> create database mydb;
+> use mydb;
+
+> create table orders (
+    -> id int auto_increment primary key,
+    -> user_id varchar(50) not null,
+    -> product_id varchar(20) not null,
+    -> order_id varchar(50) not null,
+    -> qty int default 0,
+    -> unit_price int default 0,
+    -> total_price int default 0,
+    -> created_at datetime default now()
+    -> );
+```
+- 필요 시 sink-connector 만들기 (POST localhost:8083/connectors/)
+```json
+{
+  "name" : "my-order-sink-connect",
+  "config" : {
+    "connector.class" : "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "connection.url" : "jdbc:mysql://localhost:3306/mydb",
+    "connection.user" : "root",
+    "connection.password" : "test1357",
+    "auto.create" : "true",
+    "auto.evolve" : "true",
+    "delete.enabled" : "false",
+    "tasks.max" : "1",
+    "topics" : "orders"
+  }
+}
+```
 ## ⭐ MicroService Architechture
 ![](/images/msa_architecture.png)
 - 독립적으로 배포, 확장 될 수 있는 서비스를 조합해서 하나의 큰 어플리케이션을 구성하는 패턴
@@ -390,4 +452,26 @@ spring:
 - Zookeeper : 메타데이터(Broker ID, Controller ID 등) 저장, Controller 정보 저장
 - order-service에 요청 된 주문의 수량 정보를 catalog-service에 반영
   - order service -> kafka topic으로 produce
-  - catalog service -> kafka topic conmsume
+  - catalog service -> kafka topic consume
+```xml
+<!-- kafka 사용을 위한 dependency 추가 -->
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
+```
+```java
+//configuration에 annotation 추가
+@EnableKafka
+@Configuration
+public class KafkaProducerConfig {
+  //...
+}
+```
+### ✨ Apache Kafka Connector
+- order-service의 인스턴스를 여러개 실행 할 경우 데이터 동기화 문제가 발생
+  - 유레카 서버에서 RR 방식으로 인스턴스를 호출하기 때문에!
+- order-service로 들어 온 주문 정보를 kafka topic으로 전송하여
+- sink-connector가 db에 저장할 수 있도록 함
+- 이때 message 양식 맞춰서 전송하기!!!
+  - schema, payload에 각각 필요한 정보 실어서 json string 만들어주기
