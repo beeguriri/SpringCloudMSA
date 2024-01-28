@@ -81,6 +81,7 @@ for %%i in ("%BASE_DIR%\core\build\libs\kafka_%SCALA_BINARY_VERSION%*.jar") do (
 - sink-connector 생성 (POST localhost:8083/connectors/)
   ![](/images/create_sink_connect.png)
 - 기존 topic에 있던 데이터가 새로운 table 생성 및 저장되어 있음 확인
+  
   ![](/images/source_sink_db.png)
 - console-producer를 이용하여 db 입력
   ```shell
@@ -112,5 +113,6 @@ for %%i in ("%BASE_DIR%\core\build\libs\kafka_%SCALA_BINARY_VERSION%*.jar") do (
   }
   ```
 - connect 된 db에만 반영 된 것 확인
+
   ![](/images/source_sink_db2.png)
 
