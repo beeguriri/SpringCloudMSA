@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import wendy.study.orderservice.dto.OrderDto;
 import wendy.study.orderservice.entity.OrderEntity;
 import wendy.study.orderservice.message.KafkaProducer;
+import wendy.study.orderservice.message.OrderProducer;
 import wendy.study.orderservice.service.OrderService;
 import wendy.study.orderservice.vo.RequestOrder;
 import wendy.study.orderservice.vo.ResponseOrder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/order-service")
@@ -27,6 +29,7 @@ public class OrderController {
     private final Environment env;
     private final OrderService orderService;
     private final KafkaProducer kafkaProducer;
+    private final OrderProducer orderProducer;
 
     @GetMapping("/health_check")
     public String status() {
@@ -70,11 +73,19 @@ public class OrderController {
 
         log.info("[Controller] orderDto = {}", orderDto);
 
-        OrderDto savedOrder = orderService.createOrder(orderDto);
-        ResponseOrder responseOrder = mapper.map(savedOrder, ResponseOrder.class);
+        /* jpa 사용 */
+        //OrderDto savedOrder = orderService.createOrder(orderDto);
+//        ResponseOrder responseOrder = mapper.map(savedOrder, ResponseOrder.class);
+
+        /*kafka 사용 */
+        orderDto.setOrderId(UUID.randomUUID().toString());
+        orderDto.setTotalPrice(requestOrder.getQty() * requestOrder.getUnitPrice());
 
         /* kafka에 메시지 전달 */
         kafkaProducer.send("example-catalog-topic", orderDto);
+        orderProducer.send("orders", orderDto);
+
+        ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }

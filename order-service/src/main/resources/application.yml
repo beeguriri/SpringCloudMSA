@@ -5,9 +5,14 @@ spring:
   application:
     name: order-service #고유 ID
   # db 사용 설정
+  # maria db 사용
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+    url: jdbc:mariadb://localhost:3306/mydb
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: test1357
   #jpa 설정 <- h2 버전 안바꿔도 자동 db 생성함
   jpa:
     hibernate:
