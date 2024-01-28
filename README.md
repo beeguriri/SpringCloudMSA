@@ -19,6 +19,9 @@
 - Type : Maven Project
 - 해당 project test를 하고자 할 경우 "C://Documents(내문서)"에 "etc폴더 내 2개의 폴더 옮겨 놓기"
 - Apache Kafka `2.13-3.6.1`
+- Apache Kafka Connect `7.5.3`
+- JDBC Connector `10.7.4`
+- Maria DB `2.7.11` 
 
 ## ⭐ MicroService Architechture
 ![](/images/msa_architecture.png)
@@ -440,7 +443,7 @@ $ .\bin\windows\kafka-topics.bat --bootstrap-server localhost:9092 --list
 > quickstart-events
 ```
 - 실행 시 오류 발생 할 경우 kafka-run-class.bat 수정해주기
-```shell
+```
 # 추가
 # confluent-7.5.3\bin\windows\kafka-run-class.bat
 rem Classpath addition for LSB style path
