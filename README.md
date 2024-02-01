@@ -12,6 +12,7 @@
 - [⭐ Spring Cloud Bus](#-spring-cloud-bus)
 - [⭐ Config 정보의 암호화 처리](#-config-정보의-암호화-처리)
 - [⭐ 데이터 동기화를 위한 Apache Kafka 활용](#-데이터-동기화를-위한-apache-kafka-활용)
+- [⭐ 장애 처리와 분산 추적](#-장애-처리와-분산-추적)
 
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
@@ -475,3 +476,28 @@ public class KafkaProducerConfig {
 - sink-connector가 db에 저장할 수 있도록 함
 - 이때 message 양식 맞춰서 전송하기!!!
   - schema, payload에 각각 필요한 정보 실어서 json string 만들어주기
+
+## ⭐ 장애 처리와 분산 추적
+### ✨ 장애 처리 
+- CircuitBreaker
+  - 장애가 발생하는 서비스에 반복적인 호출이 되지 못하게 차단
+  - 특정 서비스가 정상적으로 동작하지 않을 경우 다른 기능으로 대체 수행 -> 장애 회피
+  - Hystrix는 스프링부트 2.4.x 이후 버전부터는 사용 하지 않음
+- Resilience4J
+  - CircuitBreaker 지원
+  - ```xml
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+        </dependency>
+     ```
+    ```java
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<ResponseOrder> orderList = circuitbreaker.run(() ->
+                            orderServiceClient.getOrders(userId),
+                           throwable -> new ArrayList<>()
+        );
+    ```
+  - 별도 configration 파일 만들어서 CircuitBreakerFactory 설정 내용 변경할 수 있음
+### ✨ 분산 추적
+- dd
