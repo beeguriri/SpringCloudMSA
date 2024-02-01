@@ -500,4 +500,14 @@ public class KafkaProducerConfig {
     ```
   - 별도 configration 파일 만들어서 CircuitBreakerFactory 설정 내용 변경할 수 있음
 ### ✨ 분산 추적
-- dd
+- Spring Cloud Sleuth : Trace ID, Span ID 부여, Zipkin과 연동
+  - `span` : 하나의 요청에 사용 되는 작업의 단위
+  - `trace` : Trace ID, 사용자가 요청 한 span이 모여서 하나의 trace 구성
+- 설치
+```shell
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
+java -jar zipkin.jar
+```
+- 아... 진짜... 윈도우... 파워쉘.... 아.......
+- curl 명령어 아.... 진짜......
+
