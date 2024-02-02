@@ -503,11 +503,17 @@ public class KafkaProducerConfig {
 - Spring Cloud Sleuth : Trace ID, Span ID 부여, Zipkin과 연동
   - `span` : 하나의 요청에 사용 되는 작업의 단위
   - `trace` : Trace ID, 사용자가 요청 한 span이 모여서 하나의 trace 구성
-- 설치
+- zipkin 설치
 ```shell
-curl -sSL https://zipkin.io/quickstart.sh | bash -s
-java -jar zipkin.jar
-```
-- 아... 진짜... 윈도우... 파워쉘.... 아.......
-- curl 명령어 아.... 진짜......
+# https://curl.se/windows/ 에서 curl for 64-bit 다운로드
+# 환경변수 path에 curl-8.6.0_1-win64-mingw\bin 추가
 
+# powershell에서 설치 안되면 git bash에서 설치하기!!
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
+
+# zipkin 실행
+java -jar zipkin.jar
+
+# 확인
+# http://127.0.0.1:9411/zipkin/
+```
