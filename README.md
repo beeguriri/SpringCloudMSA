@@ -47,13 +47,13 @@ confluent-7.5.3$ .\bin\windows\connect-distributed.bat .\etc\kafka\connect-distr
 
 # kafka-console-consumer로 확인
 kafka_2.13-3.6.1$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic orders --from-beginning
-```
-- 필요 시 db의 table 만들기 (Maria DB CMD)
-```shell
+
 # mariadb 실행 
 $ mysql -uroot -p
 # password 입력
-
+```
+- 필요 시 db의 table 만들기 (Maria DB CMD)
+```shell
 > show databases;
 > create database mydb;
 > use mydb;
@@ -504,16 +504,53 @@ public class KafkaProducerConfig {
   - `span` : 하나의 요청에 사용 되는 작업의 단위
   - `trace` : Trace ID, 사용자가 요청 한 span이 모여서 하나의 trace 구성
 - zipkin 설치
-```shell
-# https://curl.se/windows/ 에서 curl for 64-bit 다운로드
-# 환경변수 path에 curl-8.6.0_1-win64-mingw\bin 추가
+  ```shell
+  # https://curl.se/windows/ 에서 curl for 64-bit 다운로드
+  # 환경변수 path에 curl-8.6.0_1-win64-mingw\bin 추가
+  
+  # powershell에서 설치 안되면 git bash에서 설치하기!!
+  curl -sSL https://zipkin.io/quickstart.sh | bash -s
+  
+  # zipkin 실행
+  java -jar zipkin.jar
+  
+  # 확인
+  # http://127.0.0.1:9411/zipkin/
+  ```
+- 사용 설정
+  ```xml
+  <!-- zipkin 사용을 위한 dependency 추가 -->
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-sleuth</artifactId>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-zipkin</artifactId>
+      <version>2.2.8.RELEASE</version>
+  </dependency>
+  ```
+  ```yaml
+  spring:
+    #zipkin 사용 설정
+    zipkin:
+      base-url: http://127.0.0.1:9411
+      enabled: true
+    sleuth:
+      sampler:
+        probability: 1.0
+  ```
+  - 로그 확인
+    - User-Service와 Order-Service의 traceID가 같은 것을 확인
+    - 각 작업 단위에 대한 spanID는 다른 것을 확인
+  ```shell
+  # user-service
+  INFO [user-service,3e307a6cf7fd20bf,3e307a6cf7fd20bf] 15460 --- [nio-9001-exec-8] w.s.userservice.service.UserServiceImpl  : Before Call Orders micro service
+  INFO [user-service,3e307a6cf7fd20bf,3e307a6cf7fd20bf] 15460 --- [nio-9001-exec-8] w.s.userservice.service.UserServiceImpl  : After Called Orders micro service
+  
+  # order-service
+  INFO [order-service,3e307a6cf7fd20bf,3b17c8ae7cb38391] 22464 --- [nio-9201-exec-2] w.s.o.controller.OrderController         : Before retrieve Orders data
+  ERROR [order-service,3e307a6cf7fd20bf,3b17c8ae7cb38391] 22464 --- [nio-9201-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.Exception: 강제 장애 발생] with root cause
+  ```
+  ![](/images/zipkintest.png)
 
-# powershell에서 설치 안되면 git bash에서 설치하기!!
-curl -sSL https://zipkin.io/quickstart.sh | bash -s
-
-# zipkin 실행
-java -jar zipkin.jar
-
-# 확인
-# http://127.0.0.1:9411/zipkin/
-```
