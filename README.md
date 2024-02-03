@@ -51,6 +51,9 @@ kafka_2.13-3.6.1$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server lo
 # mariadb 실행 
 $ mysql -uroot -p
 # password 입력
+
+# zipkin 실행
+$ java -jar zipkin.jar
 ```
 - 필요 시 db의 table 만들기 (Maria DB CMD)
 ```shell
@@ -554,3 +557,46 @@ public class KafkaProducerConfig {
   ```
   ![](/images/zipkintest.png)
 
+## ⭐ Microservice 모니터링
+### ✨ Prometheus
+- Metrics를 수집하고 모니터링 및 알람에 사용되는 오픈소스
+- 시계열 DB에 Metrics 저장 -> 조회 가능 (Query)
+- [https://prometheus.io/download/](https://prometheus.io/download/) `2.49.1`
+- 실행 (http://127.0.0.1:9090/)
+  ```yaml
+  # prometheus-2.49.1.windows-amd64/prometheus.yml 수정
+  # 추가하기    
+  - job_name: 'gateway-service'
+    scrape_interval: 15s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+    - targets: ['127.0.0.1:8000']
+  - job_name: 'user-service'
+    scrape_interval: 15s
+    metrics_path: '/user-service/actuator/prometheus'
+    static_configs:
+    - targets: ['127.0.0.1:8000']
+  - job_name: 'order-service'
+    scrape_interval: 15s
+    metrics_path: '/order-service/actuator/prometheus'
+    static_configs:
+    - targets: ['127.0.0.1:8000']
+  ```
+  ```shell
+  prometheus-2.49.1.windows-amd64$ .\prometheus.exe
+  ```
+  ![](/images/prometheus-check.png)
+### ✨Grafana 
+- 데이터 시각화, 모니터링 민 분석을 위한 오픈소스
+- [https://grafana.com/grafana/download?platform=windows](https://grafana.com/grafana/download?platform=windows) `10.3.1`
+- 실행 (http://127.0.0.1:3000, ID: admin / PW: admin)
+  ```shell
+  grafana-v10.3.1\bin$ .\grafana-server.exe
+  ```
+### ✨prometheus + grafana 연동하기
+- grafana에서 data source 추가해주기
+  ![](/images/grafana_datasource.png)
+- [https://grafana.com/grafana/dashboards/](https://grafana.com/grafana/dashboards/) 에서 예쁜거 찾아서 적용!
+  - import > dashboards ID : 4701, 3662, 11506
+- 데이터가 안 뜰 경우 dashboard의 항목들 수정해서 적용하기!
+  ![](/images/grafana_edit.png)
