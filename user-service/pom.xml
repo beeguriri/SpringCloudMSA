@@ -109,6 +109,11 @@
             <artifactId>spring-cloud-starter-zipkin</artifactId>
             <version>2.2.8.RELEASE</version>
         </dependency>
+        <!-- micrometer 사용을 위한 dependency 추가 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

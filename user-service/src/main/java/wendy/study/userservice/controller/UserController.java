@@ -1,5 +1,6 @@
 package wendy.study.userservice.controller;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,12 +30,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/health_check")
+    @Timed(value = "users.status", longTask = true)
     public String status() {
         return String.format("It's Working in User Service on PORT [%s], Token Secret : %s",
                 env.getProperty("local.server.port"), env.getProperty("token.secret"));
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome() {
         return greeting.getMessage();
 //        return env.getProperty("greeting.message");

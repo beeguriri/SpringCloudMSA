@@ -43,3 +43,10 @@ eureka:
     fetch-registry: true # 서버로부터 인스턴스들의 정보를 주기적으로 가져오겠다
     service-url: #서버의 위치 지정
       defaultZone: http://127.0.0.1:8761/eureka #유레카 엔드포인트에 마이크로서비스 정보 등록
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus
