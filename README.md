@@ -13,6 +13,8 @@
 - [⭐ Config 정보의 암호화 처리](#-config-정보의-암호화-처리)
 - [⭐ 데이터 동기화를 위한 Apache Kafka 활용](#-데이터-동기화를-위한-apache-kafka-활용)
 - [⭐ 장애 처리와 분산 추적](#-장애-처리와-분산-추적)
+- [⭐ Microservice 모니터링](#-microservice-모니터링)
+- [## ⭐ Docker로 배포하기](#-docker로-배포하기)
 
 ## ⭐ 개발 환경
 - SpringBoot version `2.7.18`
@@ -600,3 +602,87 @@ public class KafkaProducerConfig {
   - import > dashboards ID : 4701, 3662, 11506
 - 데이터가 안 뜰 경우 dashboard의 항목들 수정해서 적용하기!
   ![](/images/grafana_edit.png)
+
+
+## ⭐ Docker로 배포하기
+- [https://www.docker.com/get-started/](https://www.docker.com/get-started/)
+- 자주 사용하는 명령어
+  ```shell
+  # docker login
+  $ docker login -u beeguri
+  
+  # docker 설치 확인
+  $ docker info
+  
+  # docker image 목록 확인
+  $ docker image ls
+  
+  # 현재 실행중인 container 목록 확인
+  $ docker container ls
+  
+  # 이떄까지 실행 한 container 목록 확인
+  $ docker container ls -a
+  
+  # 실행중이지 않은 container 삭제 [CONTAINER ID]
+  $ docker container rm 2a551f95a09f 
+  
+  # image 다운
+  $ docker pull ubuntu:16.04
+  
+  # https://hub.docker.com/ 에서 image 검색
+  $ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+  # $ docker run ubuntu:16.04
+  # -d : 백그라운드 모드
+  # -p : 호스트와 컨테이너의 포트를 연결
+  # -v : 호스트와 컨테이너의 디렉토리를 연결
+  # -e : 컨테이너 내에서 사용할 환경변수 설정
+  # --name : 컨테이너 이름 설정
+  # --rm : 프로세스 종료시 컨테이너 자동 제거
+  
+  # 상태 확인
+  $ docker logs [CONTAINER ID]
+  ```
+- mariaDB 설치 및 실행
+  ```shell
+  # mariadb 다운 및 실행 
+  # port : [host요청 : container 응답]
+  # name : container name
+  # image name
+  $ docker pull mariadb:latest
+  $ docker run -d -p 13306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true --name mariadb mariadb:latest
+  
+  # 확인
+  $ docker container ls
+  CONTAINER ID   IMAGE            COMMAND                  CREATED          STATUS          PORTS                    NAMES
+  dbdceb6fba43   mariadb:latest   "docker-entrypoint.s…"   24 seconds ago   Up 23 seconds   0.0.0.0:3306->3306/tcp   mariadb
+  
+  # 컨테이너에 추가적인 작업을 하고자 할때
+  $ docker exec -it mariadb /bin/bash
+  root@dbdceb6fba43:/# mariadb -u root -p
+  Enter password:
+  Welcome to the MariaDB monitor.  Commands end with ; or \g.
+  
+  # 컨테이너를 삭제하고 나면, db에 만들었던 데이터가 삭제됨!!!
+  ```
+- user-service build 및 실행
+  ```shell
+  # 1. DockerFile 작성
+  
+  # 2. jar build
+  $ mvn clean compile package -DskipTests=true
+  
+  # 3. docker build (hubsite 계정명 써야됨)
+  $ docker build --tag beeguri/userservice:1.0 .
+  
+  # 4. datahub에 push
+  $ docker push beeguri/userservice:1.0
+  
+  # 5. repository에서 pull (test)
+  # 기존 이미지파일 삭제하고 pull
+  $ docker rmi [ID]
+  $ docker pull beeguri/userservice:1.0
+  
+  # 6. 실행
+  $ docker run beeguri/userservice:1.0
+  ```
+- dd
