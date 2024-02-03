@@ -5,6 +5,13 @@ server:
 spring:
   application:
     name: user-service #고유 ID
+  #zipkin 사용 설정
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
   #rabbitmq 설정
   rabbitmq:
     host: 127.0.0.1

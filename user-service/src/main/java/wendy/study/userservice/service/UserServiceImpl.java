@@ -84,11 +84,13 @@ public class UserServiceImpl implements UserService{
 
         //2. CircuitBreakerFactory 사용
         //order service에 문제가 생겼을 때 빈 order list를 가져옴
+        log.info("Before Call Orders micro service");
         CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
         List<ResponseOrder> orderList = circuitbreaker.run(() ->
                             orderServiceClient.getOrders(userId),
                            throwable -> new ArrayList<>()
         );
+        log.info("After Called Orders micro service");
 
         userDto.setOrders(orderList);
 

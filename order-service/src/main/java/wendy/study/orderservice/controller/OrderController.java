@@ -18,7 +18,6 @@ import wendy.study.orderservice.vo.ResponseOrder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/order-service")
@@ -46,7 +45,9 @@ public class OrderController {
     }
 
     @GetMapping("/{userId}/orders")
-    public ResponseEntity<List<ResponseOrder>> getOrders(@PathVariable("userId") String userId) {
+    public ResponseEntity<List<ResponseOrder>> getOrders(@PathVariable("userId") String userId) throws Exception {
+
+        log.info("Before retrieve Orders data");
 
         Iterable<OrderEntity> orders = orderService.getOrdersByUser(userId);
         List<ResponseOrder> result = new ArrayList<>();
@@ -55,14 +56,25 @@ public class OrderController {
                 order -> result.add(new ModelMapper().map(order, ResponseOrder.class))
         );
 
+        //zipkin 강제 예외 발생 test
+//        try {
+//            Thread.sleep(1000);
+//            throw new Exception("강제 장애 발생");
+//        } catch (InterruptedException e) {
+//            log.error(e.getMessage());
+//        }
+
+        log.info("After received Orders data");
+
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PostMapping("/{userId}/orders")
-    public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId,
-                                                     @RequestBody RequestOrder requestOrder){
+    public ResponseEntity<ResponseOrder> createOrder (@PathVariable("userId") String userId,
+                                                     @RequestBody RequestOrder requestOrder) {
 
         log.info("[Controller] requestOrder = {}", requestOrder);
+        log.info("Before add Orders data");
 
         //모델 객체 두번 쓸거니까...!!
         ModelMapper mapper = new ModelMapper();
@@ -86,6 +98,8 @@ public class OrderController {
 //        orderProducer.send("orders", orderDto);
 
 //        ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
+
+        log.info("After added Orders data");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }

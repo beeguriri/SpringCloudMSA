@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: order-service #고유 ID
+  #zipkin 사용 설정
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
   # db 사용 설정
   # maria db 사용
   datasource:
