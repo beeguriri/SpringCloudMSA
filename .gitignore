@@ -279,3 +279,6 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,maven,windows,visualstudiocode,macos,eclipse,gradle
 **/.idea
+/etc/docker-files/mysql_data/
+/etc/docker-files/kafka-docker/**
+!/etc/docker-files/kafka-docker/docker-compose-single-broker.yml
