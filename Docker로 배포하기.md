@@ -177,6 +177,7 @@ root@dbdceb6fba43:/# mariadb -uroot -p
 - github.com/wurstmeister/kafka-docker
 - kafka 사용하는 서비스의 zookeeper와 kafka의 ip를 변경
 ```shell
+# 0. git pull github.com/wurstmeister/kafka-docker
 # 1. docker-compse-single-broker.yml 파일 수정(/etc/docker-files/kafka-docker)
 # 2. 실행
 $ docker-compose -f docker-compose-single-broker.yml up -d
@@ -198,26 +199,54 @@ $ docker run -d -p 9090:9090 --network ecommerce-network --name prometheus -v D:
 $ docker run -d -p 3000:3000 --network ecommerce-network --name grafana grafana/grafana
 ```
 
-### ✨ service 실행
+### ✨ my-service 실행
+- gateway address 일괄 적용하기위해 springcloud bus 기능 
+- (공통) 환경변수 설정
+  - config-service, rabbitmq, zipkin, eureka, logging
 - user-service build 및 실행
+  - 기존에 security config에 설정되어있던 Ip주소를 gateway 주소로 변경 
   ```shell
-  # 1. DockerFile 작성
-  
+  # 1. docker file 작성
   # 2. jar build
   $ mvn clean compile package -DskipTests=true
   
-  # 3. docker build (hubsite 계정명 써야됨)
-  $ docker build --tag beeguri/userservice:1.0 .
+  # 3. docker build
+  $ docker build --tag beeguri/user-service:1.1 .
   
-  # 4. datahub에 push
-  $ docker push beeguri/userservice:1.0
-  
-  # 5. repository에서 pull (test)
-  # 기존 이미지파일 삭제하고 pull
-  $ docker rmi [ID]
-  $ docker pull beeguri/userservice:1.0
-  
-  # 6. 실행
-  $ docker run beeguri/userservice:1.0
+   # 4. 실행
+  $ docker run -d \
+              --network ecommerce-network \
+              --name user-service \
+              -e "spring.cloud.config.uri=http://config-service:8888" \
+              -e "spring.rabbitmq.host=rabbitmq" \
+              -e "spring.zipkin.base-url=http://zipkin:9411" \
+              -e "eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka/" \
+              -e "logging.file=/api-logs/users-ws.log" \
+              beeguri/user-service:1.1
   ```
-- dd
+- order service
+  - maria db 사용할 수 있게 환경변수 추가
+  - kafka produce config의 주소를 docker의 kafka 주소로 변경해주기
+  ```shell
+  $ docker run -d \
+              --network ecommerce-network \
+              --name order-service \
+              -e "spring.cloud.config.uri=http://config-service:8888" \
+              -e "spring.rabbitmq.host=rabbitmq" \
+              -e "spring.zipkin.base-url=http://zipkin:9411" \
+              -e "eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka/" \
+              -e "logging.file=/api-logs/orders-ws.log" \
+              -e "spring.datasource.url=jdbc:mariadb://mariadb:3306/mydb" \
+              beeguri/order-service:1.0
+  ```
+- catalog service
+  - kafka consumer config의 주소를 docker의 kafka 주소로 변경해주기
+  ```shell
+  $ docker run -d \
+              --network ecommerce-network \
+              --name catalog-service \
+              -e "spring.cloud.config.uri=http://config-service:8888" \
+              -e "spring.rabbitmq.host=rabbitmq" \
+              -e "eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka/" \
+              beeguri/catalog-service:1.0
+  ```
