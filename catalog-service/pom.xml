@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>wendy.study</groupId>
 	<artifactId>catalog-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>catalog-service</name>
 	<description>catalog-service</description>
 	<properties>
