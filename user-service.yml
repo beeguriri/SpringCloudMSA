@@ -1,0 +1,19 @@
+# application에서 공통으로 사용되는 부분은 별도 분리
+# 토큰 유효기간, 키 지정
+# token:
+#   expriration_time: 86400000 #유효기간 1일 (ms)
+#   secret: user_token_native_user_service
+
+# gateway:
+#   ip: 127.0.0.1
+
+spring:
+  datasource:
+   url: jdbc:h2:mem:testdb
+   username: sa  
+   password: '{cipher}AQBFooaZmW0eTdlw3tNeBik3ZxKg98u53rVUh6PDRUOd73dzdZDUfqk5Cj3kIeHvWnuQyGa4lsC0D/ihKxeglGLfte6Bv2bjioLmECbJSoK7hHFUz+kQDTD1qLIfg/wgTIBZKVErCPqOsSxAcyjcye9k0K3UbeBC6sioDNgKFXzAfwJTa9Mw4SpfmCMnhpQz8mzxwKVszQoNST+SzXcgaBTINEmBnY29cxPBRuvvqueEsc3cEoXS62NJHxBvmMdHzd10bpO+dXCGtwfufv0tCcWfHlOXBsChNM4KEP7Ouc4T2XtSZDOYr7BIasBZ5CsZOxL/P5SoWG4gNE4xhCRe2X2VxJMivffwzUxz786Zn0ltotWIblBqQBmY/NXjCejIuCU='
+
+order-service:
+  url: http://127.0.0.1:8000/order-service/%s/orders
+  exception:
+    orders_is_empty: User's orders is empty
