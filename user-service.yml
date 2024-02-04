@@ -4,8 +4,8 @@
 #   expriration_time: 86400000 #유효기간 1일 (ms)
 #   secret: user_token_native_user_service
 
-# gateway:
-#   ip: 127.0.0.1
+gateway:
+  ip: 172.18.0.5 #docker의 gateway-service 주소
 
 spring:
   datasource:
