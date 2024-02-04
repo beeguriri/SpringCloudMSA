@@ -30,7 +30,7 @@ public class SecurityConfig {
         http.csrf().disable();
 //        http.authorizeHttpRequests().antMatchers("/users/**").permitAll(); //모든 요청에 대해 허가
         http.authorizeRequests().antMatchers("/**")
-                .hasIpAddress("127.0.0.1")
+                .hasIpAddress("172.18.0.5") //docker의 gateway ip 주소
                 .and()
                 .addFilter(getAuthenticationFilter());
 

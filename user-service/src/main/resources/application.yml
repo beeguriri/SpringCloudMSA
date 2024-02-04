@@ -1,6 +1,6 @@
 server:
   port: 9001
-  address: 127.0.0.1
+#  address: 127.0.0.1
 #  port: 0 # random port 사용
 
 spring:
@@ -53,9 +53,9 @@ eureka:
     service-url: #서버의 위치 지정
       defaultZone: http://127.0.0.1:8761/eureka #유레카 엔드포인트에 마이크로서비스 정보 등록
 # 유레카가 인스턴스 호출할 때 IP 확인 용
-  instance:
-    prefer-ip-address: true
-    ip-address: ${server.address}
+#  instance:
+#    prefer-ip-address: true
+#    ip-address: ${server.address}
 
 # welcome message 작성
 # Environment 객체 이용해서 사용
