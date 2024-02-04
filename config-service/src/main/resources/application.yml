@@ -17,10 +17,13 @@ spring:
       server:
         git:
 #          uri: file://d:/Coding Practice/SpringCloudMSA
+          # 도커에서 실행할 때
           uri: https://github.com/beeguriri/SpringCloudMSA
+          # public repository 이므로 id/pw 필요 없음
         native:
           # http://127.0.0.1:8888/user-service/native 등으로 경로 반영 잘 됐는 지 확인
-          search-locations: file:///${user.home}\Documents\native-file-repo
+          # 로컬에서 실행할 때
+#          search-locations: file:///${user.home}\Documents\native-file-repo
 
 # actuator endpoint 추가
 management:

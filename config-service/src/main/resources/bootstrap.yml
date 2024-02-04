@@ -1,6 +1,9 @@
 encrypt:
 #  key: hello1234spring
   key-store:
-    location: file:///${user.home}\Documents\keystore\apiEncryptionKey.jks
+    # 로컬에서 실행할 때
+#    location: file:///${user.home}\Documents\keystore\apiEncryptionKey.jks
+    # 도커에서 실행할 때
+    location: file:/apiEncryptionKey.jks
     password: test1234
     alias: apiEncryptionKey
